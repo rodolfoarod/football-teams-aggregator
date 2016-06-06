@@ -11,17 +11,19 @@ def make_soup(url):
 def get_search_results(search_string):
     url = BASE_URL + "search.php?search_string=" + search_string + "&op=all"
     soup = make_soup(url)
-    table = soup.find("table", "zztable stats")
-    tbody = table.find("tbody")
+    search_table = soup.find("table", "zztable stats")
+    search_tbody = search_table.find("tbody")
+    search_rows = search_tbody.find_all("tr")
 
     results = []
-    rows = tbody.find_all("tr")
-
-    for index in range(len(rows)-1):
-        td = rows[index].find_all("td")[1]
+    for index in range(len(search_rows)-1):
+        td = search_rows[index].find_all("td")[1]
         anchor = td.find("a")
         team_id = get_team_id(anchor["href"])
-        if team_id != -1: results.append([anchor.get_text(), team_id])
+        if team_id != -1: results.append({
+            'team_name' : anchor.get_text(),
+            'team_id' : team_id
+        })
 
     return results
 
@@ -35,6 +37,34 @@ def get_team_id(href):
 
     return team_id
 
+def get_team_games(team_id):
+    url = BASE_URL + "team_results.php?id=" + str(team_id)
+    soup = make_soup(url)
+    games_table = soup.find_all("div", {"id" : "team_games"})
+    games_tbody = games_table[1].find("tbody")
+    games_rows = games_tbody.find_all("tr")
+
+    games = []
+    for index in range(len(games_rows)-1):
+
+        if len(games_rows[index].contents[4].contents) != 1:
+            game_opo = games_rows[index].contents[4].contents[1].get_text()
+        else:
+            game_opo = games_rows[index].contents[4].contents[0].get_text()
+
+        games.append({
+            'game_date' : games_rows[index].contents[1].get_text(),
+            'game_time' : games_rows[index].contents[2].get_text(),
+            'game_field' : games_rows[index].contents[3].get_text(),
+            'game_opo' : game_opo,
+            'game_result' : games_rows[index].contents[5].contents[0].get_text()
+        })
+
+    return games
+
 if __name__ == '__main__':
-    search_results = get_search_results("porto")
-    print search_results
+    #search_results = get_search_results("porto")
+    #print search_results
+
+    #team_games = get_team_games(9)
+    #print team_games
