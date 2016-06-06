@@ -1,0 +1,9 @@
+### Check if you have Python 2.7
+
+$ python --version
+
+### Install BeautifulSoup
+
+$ sudo easy_install pip
+$ sudo pip install BeautifulSoup4
+$ sudo pip install lxml // Problems installing lxml, try: $ xcode-select --install
