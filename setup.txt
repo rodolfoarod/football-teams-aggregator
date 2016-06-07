@@ -7,3 +7,7 @@ $ python --version
 $ sudo easy_install pip
 $ sudo pip install BeautifulSoup4
 $ sudo pip install lxml // Problems installing lxml, try: $ xcode-select --install
+
+### Install Node.js v4.4.5 LTS - https://nodejs.org/en/#download
+$ npm install
+$ node server.js

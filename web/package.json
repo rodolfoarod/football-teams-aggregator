@@ -1,0 +1,16 @@
+{
+  "name": "football-teams-aggregator",
+  "version": "1.0.0",
+  "description": "Football Teams Aggregator Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "PP Project",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.12.3",
+    "express": "^4.13.4",
+    "jade": "^1.11.0"
+  }
+}
