@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
-from time import sleep
+import sys
+import json
 
 BASE_URL = "http://www.zerozero.pt/"
 
@@ -63,8 +64,13 @@ def get_team_games(team_id):
     return games
 
 if __name__ == '__main__':
-    #search_results = get_search_results("porto")
-    #print search_results
 
-    #team_games = get_team_games(9)
-    #print team_games
+    test = [
+        {'team_name': 'Porto', 'team_id': 1},
+        {'team_name': 'Benfica', 'team_id': 2},
+        {'team_name': 'Sporting', 'team_id': 3}
+    ]
+
+    lines = sys.stdin.readlines()
+    team_name = str(json.loads(lines[0]))
+    print json.dumps(get_search_results(team_name))

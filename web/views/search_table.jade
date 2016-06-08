@@ -1,12 +1,11 @@
 table(class="table")
-    caption Search results for #{team}
-    thead
+  caption Search results for #{team}
+  thead
+    tr
+      th #
+      th Team
+  tbody
+    each result in results
         tr
-            th #
-            th Team
-    tbody
-        - for (var i = 1; i < 11; ++i) {
-            tr
-                td #{i}
-                td Porto
-        - }
+          td #{result.team_id}
+          td #{result.team_name}
