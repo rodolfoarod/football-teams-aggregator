@@ -1,15 +1,11 @@
-doctype html
-html
-    head
-        title Football Teams Aggregator
-        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
-        link(rel='stylesheet', href='/css/style.css')
-        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
-        script(src='/bootstrap/js/bootstrap.min.js')
-    body
-        h1 Welcome to our Football Teams Aggregator
-        p
-            | Search for your favorite team history and games
-        p
-            | Add search form
-        a(href="/teams/10") Team with id 10
+extends ./layout.jade
+
+block content
+    form(class="form-inline")
+        div(class="form-group")
+            input(
+                type="text"
+                class="form-control"
+                id="searchTeam"
+                placeholder="Search for your team")
+        button(type="submit", class="btn btn-default pp-btn") Search
