@@ -8,4 +8,5 @@ table(class="table")
     each result in results
         tr
           td #{result.team_id}
-          td #{result.team_name}
+          td
+            a(href='/team/#{result.team_id}') #{result.team_name}

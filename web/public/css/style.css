@@ -6,3 +6,7 @@
 .pp-btn {
     margin: 5px;
 }
+
+.table thead th {
+  text-align: center;
+}
