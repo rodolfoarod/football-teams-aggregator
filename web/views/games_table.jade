@@ -1,0 +1,16 @@
+table(class="table")
+  thead
+    tr
+      th Date
+      th Time
+      th Field
+      th Result
+      th Opponent
+  tbody
+    each result in results
+        tr
+          td #{result.game_date}
+          td #{result.game_time}
+          td #{result.game_field}
+          td #{result.game_result}
+          td #{result.game_opo}

@@ -1,6 +1,8 @@
 var express = require('express')
 var router = express.Router()
 
+router.use('/team', require('./team'))
+
 router.get('/', function(req, res){
   res.render('index')
 })
@@ -37,8 +39,7 @@ router.post('/', function(req, res){
   */
   py.stdin.write(JSON.stringify(data));
   py.stdin.end();
-
-
+  
 })
 
 module.exports = router
