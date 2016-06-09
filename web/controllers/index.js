@@ -8,7 +8,7 @@ router.get('/', function(req, res){
 router.post('/', function(req, res){
 
   var spawn = require('child_process').spawn,
-  py    = spawn('python', ['../web_scraping.py']),
+  py    = spawn('python', ['../scraping_search.py']),
   data = [req.body.team],
   dataString = '';
 
