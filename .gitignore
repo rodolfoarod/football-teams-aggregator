@@ -63,3 +63,4 @@ target/
 
 #NodeJS
 web/node_modules/
+.vscode/launch.json
