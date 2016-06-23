@@ -11,7 +11,7 @@ router.post('/', function(req, res){
 
   var spawn = require('child_process').spawn,
   py    = spawn('python', ['../scraping_search.py']),
-  data = [req.body.team],
+  data = [req.body.team] + "\n",
   dataString = '';
 
   /*
@@ -37,7 +37,7 @@ router.post('/', function(req, res){
   We have to stringify the data first
   otherwise our python process wont recognize it
   */
-  py.stdin.write(JSON.stringify(data));
+  py.stdin.write(data);
   py.stdin.end();
   
 })

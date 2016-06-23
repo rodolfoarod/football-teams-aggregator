@@ -40,12 +40,17 @@ def get_team_id(href):
 
 if __name__ == '__main__':
 
-    test = [
-        {'team_name': 'Porto', 'team_id': 1},
-        {'team_name': 'Benfica', 'team_id': 2},
-        {'team_name': 'Sporting', 'team_id': 3}
-    ]
+    #test = [
+    #    {'team_name': 'Porto', 'team_id': 1},
+    #    {'team_name': 'Benfica', 'team_id': 2},
+    #    {'team_name': 'Sporting', 'team_id': 3}
+    #]
 
-    lines = sys.stdin.readlines()
-    team_name = str(json.loads(lines[0]))
+    team_name = raw_input('')
+    #fo = open('myfile.dat', 'a')
+    #fo.write(team_name)
+    #print json.dumps(team_name)
+    #lines = sys.stdin.readlines()
+    #team_name = str(json.loads(lines[0]))
     print json.dumps(get_search_results(team_name))
+    sys.stdout.flush()
