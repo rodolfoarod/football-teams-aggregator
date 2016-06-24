@@ -32,22 +32,22 @@ function appendSearchTriples(query) {
 }
 
 function appendSearchLangFilters(query) {
-	query.appendWhereFilterAnd('LANG(?labelEn) = "en"')
+	query.appendWhereFilterAnd('( LANG(?labelEn) = "en" || LANG(?labelEn) = "pt" )')
 }
 
 function appendSearchFilters(query, name) {
-	var allNames = name.split();
-	var first = false;
+	var allNames = name.split(" ");
+	var first = true;
 	var filter = "("
 
 	allNames.forEach(function (element) {
 		if (!first) filter += " && ";
-		first = true;
+		first = false;
 		filter += "CONTAINS( LCASE(?labelEn), '" + element.toLowerCase() + "' )"
 	}, this);
 	filter += ")";
 
-	query.addWhereFilter(filter);
+	query.appendWhereFilterAnd(filter);
 }
 
 function createSearchResultObj(obj, entry) {
@@ -73,8 +73,7 @@ router.get("/search", function (req, res) {
 		res.render('./sparql/info')
 		return;
 	}
-
-	var teamName = req.query.team_name
+	appendSearchFilters(query, req.query.team);
 
 	var queryStr = query.returnQuery()
 	endpoint.selectQuery(queryStr, function (error, response) {
