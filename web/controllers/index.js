@@ -16,6 +16,7 @@ router.post('/', function(req, res){
   //console.log(req.body.password);
 
   req.session.isAuthenticated = true
+  req.session.userId = 1
 
   res.redirect('/home/')
 

@@ -2,11 +2,9 @@ table(class="table")
   caption Favorites Teams
   thead
     tr
-      th #
       th Team
   tbody
     each ft in favTeams
         tr
-          td #{ft.team_id}
           td
             a(href='/team/#{ft.team_id}/#{ft.team_name}') #{ft.team_name}
