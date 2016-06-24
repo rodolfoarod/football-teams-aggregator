@@ -27,15 +27,15 @@ module.exports = {
 	},
 
 
-	addResultTeam: function(user_id, idzzero, team_name) {
+	addTeam: function(user_id, idzzero, iddbpedia, team_name) {
 
 		createDb();
 
-		getTeamId(idzzero, function(err, row){
+		getTeamId(idzzero, iddbpedia, function(err, row){
 
 			if(err) {
 
-				console.log("addResultTeam - " + err);
+				console.log("addTeam - " + err);
 
 			} else {
 
@@ -43,13 +43,13 @@ module.exports = {
 
 					console.log("Adding only new relation...");
 
-					insertTeamRel(user_id, row.id, null);
+					insertTeamRel(user_id, row.id);
 
 				} else {
 
 					console.log("Adding new team and new relation");
 
-					insertTeam(user_id, idzzero, team_name);
+					insertTeam(user_id, idzzero, iddbpedia, team_name);
 
 				}
 
@@ -69,20 +69,46 @@ function createDb(callback) {
 	db = new sqlite3.Database('fta.db', callback);
 }
 
-function insertTeam(user_id, idzzero, teamname) {
+function insertTeam(user_id, idzzero, iddbpedia, teamname) {
 	console.log("Insert team");
-	var stmt = db.prepare("INSERT INTO team(idzzero, teamname) VALUES ($idzzero, $teamname)");
-	stmt.run({ $idzzero: idzzero, $teamname: teamname});
+
+	var sql;
+	if(idzzero !== -1) {
+		sql = "INSERT INTO team(idzzero, teamname) VALUES ($id, $teamname)";
+	} else if(iddbpedia !== -1) {
+		sql = "INSERT INTO team(iddbpedia, teamname) VALUES ($id, $teamname)"
+	}
+
+	var stmt = db.prepare(sql);
+
+	if(idzzero !== -1) {
+		stmt.run({ $id: idzzero, $teamname: teamname});
+	} else if(iddbpedia !== -1) {
+		stmt.run({ $id: iddbpedia, $teamname: teamname});
+	}
+
 	stmt.finalize(function(){
-		getTeamId(idzzero, function(row){
+		getTeamId(idzzero, iddbpedia, function(row){
 			insertTeamRel(user_id, row.id);
 		});
 	});
+
 }
 
-function getTeamId(idzzero, callback) {
+function getTeamId(idzzero, iddbpedia, callback) {
+
 	console.log("Getting team id");
-	var sql = "SELECT * FROM team WHERE idzzero=" + idzzero;
+
+	var sql;
+	if(idzzero !== -1) {
+		sql = "SELECT * FROM team WHERE idzzero=" + idzzero;
+	} else if(iddbpedia !== -1){
+		sql = "SELECT * FROM team WHERE iddbpedia=" + iddbpedia;
+	} else {
+		console.log("getTeamId - Wrong ID");
+		return;
+	}
+
 	db.get(sql, function(err, row){
 		callback(row);
 	});
