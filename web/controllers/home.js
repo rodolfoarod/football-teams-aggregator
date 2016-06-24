@@ -8,6 +8,8 @@ router.get('/', function(req, res){
     return
   }
 
+
+
   res.render('home_page', { search_type: "titles" })
 
 })
@@ -19,7 +21,9 @@ router.get('/results', function(req, res){
     return
   }
 
-  res.render('home_page', { search_type: "results" })
+  //var fT = [{team_id: "2", team_name: "Test FC"}]
+
+  res.render('home_page', { search_type: "results", favTeams: fT })
 
 })
 

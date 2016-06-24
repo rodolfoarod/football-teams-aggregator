@@ -12,8 +12,8 @@ router.get('/', function(req, res){
 
 router.post('/', function(req, res){
 
-  console.log(req.body.email);
-  console.log(req.body.password);
+  //console.log(req.body.email);
+  //console.log(req.body.password);
 
   req.session.isAuthenticated = true
 
