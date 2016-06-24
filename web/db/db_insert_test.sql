@@ -1,2 +1,2 @@
 INSERT INTO user(username, password)
-VALUES('leo', 'pass');
+VALUES('leo@mail.pt', 'pass');
