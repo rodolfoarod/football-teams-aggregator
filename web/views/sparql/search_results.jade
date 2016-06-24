@@ -1,0 +1,12 @@
+table(class="table")
+  caption Search results
+  thead
+    tr
+      th #
+      th Team
+  tbody
+    each team in teams
+        tr
+          td #{team.iri}
+          td
+            a(href='/team/{team.iri}') #{team.labelEn}

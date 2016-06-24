@@ -22,31 +22,67 @@ addPrefixes = function (query) {
 }
 
 function addSearchSelectParams(query) {
-    
+    var select = "select distinct ?team ?labelEn"
+	query.addSelect(select);
 }
 
 function appendSearchTriples(query) {
-    
+    query.addTriple("?team a dbo:SoccerClub .")
+	query.appendTriple("?team rdfs:label ?labelEn .")
 }
 
 function appendSearchLangFilters(query) {
+	query.appendWhereFilterAnd('LANG(?labelEn) = "en"')
+}
 
+function appendSearchFilters(query, name) {
+	var allNames = name.split();
+	var first = false;
+	var filter = "("
+
+	allNames.forEach(function (element) {
+		if (!first) filter += " && ";
+		first = true;
+		filter += "CONTAINS( LCASE(?labelEn), '" + element.toLowerCase() + "' )"
+	}, this);
+	filter += ")";
+
+	query.addWhereFilter(filter);
 }
 
 function createSearchResultObj(obj, entry) {
-    
+    if (entry.team) obj.iri = entry.team.value;
+	if (entry.labelEn) obj.labelEn = entry.labelEn.value;
 }
-
 //
 //
 //routes
-router.get("/",function (req, res) {
-    res.render('layout')
-} )
+router.get("/", function (req, res) {
+    res.render('./sparql/info')
+})
 
-// router.get("/search/:team_name",function (req, res) {
-//     console.log("not implemented")
-// } )
+router.get("/:team_name", function (req, res) {
+	
+	var query = new SparqlQuery()
+	addPrefixes(query)
+	addSearchSelectParams(query)
+	appendSearchTriples(query)
+
+	var queryStr = query.returnQuery()
+	endpoint.selectQuery(queryStr, function (error, response) {
+		var jsonAns = JSON.parse(response.body).results.bindings
+		var jsAns = []
+
+		jsonAns.forEach(function(entry) {
+			var obj = new Object()
+			createSearchResultObj(obj, entry)
+			jsAns.push(obj)
+		}, this);
+
+		res.render("./sparql/info", { teams: jsAns })
+	})
+
+})
 
 // router.get("/team/:iri", function (req, res){
 //     console.log("not implemented")
