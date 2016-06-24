@@ -4,9 +4,9 @@ var router = express.Router()
 router.get('/:teamId/:teamName', function(req, res){
 
   // TODO: Delete
-  if(req.session.lastPage) {
-    console.log("Last Page = " + req.session.lastPage);
-  }
+  //if(req.session.lastPage) {
+    //console.log("Last Page = " + req.session.lastPage);
+  //}
 
   var spawn = require('child_process').spawn
   var py = spawn('python', ['../scraping_team.py'])

@@ -6,9 +6,9 @@ router.use('/team', require('./team'))
 router.get('/', function(req, res){
 
   // TODO: Delete
-  req.session.lastPage = '/index'
+  //req.session.lastPage = '/index'
 
-  res.render('index')
+  res.render('login_page')
 })
 
 router.post('/', function(req, res){
