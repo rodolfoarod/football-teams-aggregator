@@ -25,63 +25,68 @@ module.exports = {
 
 	addResultTeam: function(user_id, team_id, team_name) {
 
-		console.log("addResultTeam");
-
 	  var db = new sqlite3.Database('fta.db');
 		var sql = "SELECT * FROM team WHERE idzzero=" + team_id;
 
 		db.get(sql, function(err, row){
+
 				if(err){
-					console.log("addResultTeam: " + err);
-					db.close();
+
+					console.log("addResultTeam 1: " + err);
+
 				} else {
 
 					if (typeof row != 'undefined') {
 
-						addUserTeamRel(db, user_id, team_id);
-						db.close();
+						console.log("Adding only new relation...");
+
+						sql = "INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)";
+
+						stmt = db.prepare(sql)
+						stmt.run({ $iduser: user_id, $idteam: team_id }, function(err){
+							if(err){
+								console.log("addResultTeam 2: " + err);
+							} else {
+								console.log("addResultTeam: Team - " + team_id + ":" + team_name);
+							}
+						})
+						stmt.finalize();
 
 					} else {
 
-						var sql = "INSERT INTO team(idzzero, teamname) VALUES ($idzzero, $teamname)";
+						console.log("Adding new team...");
 
-						var stmt = db.preprare(sql);
+						sql = "INSERT INTO team(idzzero, teamname) VALUES ($idzzero, $teamname)";
+
+						stmt = db.prepare(sql);
 						stmt.run({ $idzzero: team_id, $teamname: team_name}, function(err){
 							if(err){
-								console.log("addResultTeam: " + err);
-								db.close();
+								console.log("addResultTeam 3: " + err);
 							} else {
-								addUserTeamRel(db, user_id, team_id);
-								db.close();
+
+								console.log("Adding new relation...");
+
+								sql = "INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)";
+
+								stmt = db.prepare(sql)
+								stmt.run({ $iduser: user_id, $idteam: team_id }, function(err){
+									if(err){
+										console.log("addResultTeam 4: " + err);
+									} else {
+										console.log("New Relation - " + team_id + ":" + team_name);
+									}
+
+								})
+
 							}
 						})
-
+						stmt.finalize();
+						
 					}
 				}
+
 		})
 
-		function addUserTeamRel(db, user_id, team_id) {
-
-			var sql = "INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)";
-			var stmt = db.prepare(sql)
-			stmt.run({ $iduser: user_id, $idteam: team_id }, function(err){
-				if(err){
-					console.log("addResultTeam: " + err);
-					db.close();
-				} else {
-					console.log("addResultTeam: Team - " + team_id + ":" + team_name);
-					db.close()
-				}
-			})
-
-		}
-
-
-
-
-
 	}
-
-
 
 };
