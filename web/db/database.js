@@ -1,6 +1,41 @@
 var sqlite3 = require('sqlite3').verbose();
 
+var adding = false;
+var i = 0;
+var resultTeam = new Array();
+
 module.exports = {
+	getResultTeam: function(user_id, callback) {
+		var db = new sqlite3.Database('fta.db');
+		resultTeam = new Array();
+		i = 0;
+
+		db.all("SELECT * from user_team where iduser='" + user_id + "'", function(err,teamIds) {
+			if(teamIds.length) {
+				teamIds.forEach(function (row1) {
+					db.all("SELECT * from team where id='" + row1.idteam + "'", function(err,teams) {
+						teams.forEach(function (row2) {
+							adding = true;
+							resultTeam.push(row2);
+						});
+						adding = false;
+						callback(resultTeam);
+						db.close();
+					});
+				});
+			}
+			else {
+				callback(null);
+				db.close();
+			}
+		});
+	},
+	
+	getTitlesTeam: function(user_id, callback) {
+		var db = new sqlite3.Database('fta.db');
+		db.close();
+	},
+	
 	getUser: function (username, password, callback) {
 		var db = new sqlite3.Database('fta.db');
 
