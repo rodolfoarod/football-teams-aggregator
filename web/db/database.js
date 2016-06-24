@@ -1,4 +1,7 @@
+"use strict";
+
 var sqlite3 = require('sqlite3').verbose();
+var db;
 
 module.exports = {
 	getUser: function (username, password, callback) {
@@ -23,70 +26,77 @@ module.exports = {
 		});
 	},
 
-	addResultTeam: function(user_id, team_id, team_name) {
 
-	  var db = new sqlite3.Database('fta.db');
-		var sql = "SELECT * FROM team WHERE idzzero=" + team_id;
+	addResultTeam: function(user_id, idzzero, team_name) {
 
-		db.get(sql, function(err, row){
+		createDb();
 
-				if(err){
+		getTeamId(idzzero, function(err, row){
 
-					console.log("addResultTeam 1: " + err);
+			if(err) {
+
+				console.log("addResultTeam - " + err);
+
+			} else {
+
+				if(typeof row != 'undefined') {
+
+					console.log("Adding only new relation...");
+
+					insertTeamRel(user_id, row.id, null);
 
 				} else {
 
-					if (typeof row != 'undefined') {
+					console.log("Adding new team and new relation");
 
-						console.log("Adding only new relation...");
+					insertTeam(user_id, idzzero, team_name);
 
-						sql = "INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)";
-
-						stmt = db.prepare(sql)
-						stmt.run({ $iduser: user_id, $idteam: team_id }, function(err){
-							if(err){
-								console.log("addResultTeam 2: " + err);
-							} else {
-								console.log("addResultTeam: Team - " + team_id + ":" + team_name);
-							}
-						})
-						stmt.finalize();
-
-					} else {
-
-						console.log("Adding new team...");
-
-						sql = "INSERT INTO team(idzzero, teamname) VALUES ($idzzero, $teamname)";
-
-						stmt = db.prepare(sql);
-						stmt.run({ $idzzero: team_id, $teamname: team_name}, function(err){
-							if(err){
-								console.log("addResultTeam 3: " + err);
-							} else {
-
-								console.log("Adding new relation...");
-
-								sql = "INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)";
-
-								stmt = db.prepare(sql)
-								stmt.run({ $iduser: user_id, $idteam: team_id }, function(err){
-									if(err){
-										console.log("addResultTeam 4: " + err);
-									} else {
-										console.log("New Relation - " + team_id + ":" + team_name);
-									}
-
-								})
-
-							}
-						})
-						stmt.finalize();
-						
-					}
 				}
 
-		})
+			}
+
+		});
+
+		closeDb();
 
 	}
 
 };
+
+
+function createDb(callback) {
+	console.log("Create DB");
+	db = new sqlite3.Database('fta.db', callback);
+}
+
+function insertTeam(user_id, idzzero, teamname) {
+	console.log("Insert team");
+	var stmt = db.prepare("INSERT INTO team(idzzero, teamname) VALUES ($idzzero, $teamname)");
+	stmt.run({ $idzzero: idzzero, $teamname: teamname});
+	stmt.finalize(function(){
+		getTeamId(idzzero, function(row){
+			insertTeamRel(user_id, row.id);
+		});
+	});
+}
+
+function getTeamId(idzzero, callback) {
+	console.log("Getting team id");
+	var sql = "SELECT * FROM team WHERE idzzero=" + idzzero;
+	db.get(sql, function(err, row){
+		callback(row);
+	});
+
+}
+
+function insertTeamRel(user_id, team_id) {
+	console.log("Insert team relation");
+	var stmt = db.prepare("INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)");
+	stmt.run({ $iduser: user_id, $idteam: team_id });
+	stmt.finalize();
+}
+
+function closeDb() {
+	console.log("DB closing...");
+	db.close();
+}
