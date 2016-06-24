@@ -51,7 +51,7 @@ function appendSearchFilters(query, name) {
 }
 
 function createSearchResultObj(obj, entry) {
-    if (entry.team) obj.iri = entry.team.value;
+    if (entry.team) obj.iri = encodeURIComponent(entry.team.value);
 	if (entry.labelEn) obj.labelEn = entry.labelEn.value;
 }
 //
@@ -67,8 +67,9 @@ router.get("/search", function (req, res) {
 	addPrefixes(query)
 	addSearchSelectParams(query)
 	appendSearchTriples(query)
+	appendSearchLangFilters(query)
 
-	if(!req.query.team_name || req.query.team_name == ""){
+	if(!req.query.team || req.query.team == ""){
 		res.render('./sparql/info')
 		return;
 	}
@@ -91,8 +92,8 @@ router.get("/search", function (req, res) {
 
 })
 
-// router.get("/team/:iri", function (req, res){
-//     console.log("not implemented")
-// })
+router.get("/team/:iri", function (req, res){
+    console.log("not implemented")
+})
 
 module.exports = router;
