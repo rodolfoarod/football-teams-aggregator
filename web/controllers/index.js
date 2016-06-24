@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 router.use('/team', require('./team'))
+router.use('/info', require('./info'))
 
 router.get('/', function(req, res){
   res.render('index')
