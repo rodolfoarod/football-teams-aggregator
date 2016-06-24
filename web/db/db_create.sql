@@ -20,16 +20,6 @@ CREATE TABLE IF NOT EXISTS team (
 	CONSTRAINT iddbpedia_u UNIQUE (iddbpedia)
 );
 
-CREATE TABLE IF NOT EXISTS teamtitle (
-	id integer,
-	title character varying NOT NULL,
-	year integer NOT NULL,
-    idteam integer NOT NULL,
-
-	CONSTRAINT teaminfo_pkey PRIMARY KEY (id),
-	CONSTRAINT teaminfo_idteam_fkey FOREIGN KEY (idteam) REFERENCES team(id)
-);
-
 CREATE TABLE IF NOT EXISTS user_team (
     iduser integer NOT NULL,
     idteam integer NOT NULL,
