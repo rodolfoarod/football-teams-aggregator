@@ -8,7 +8,18 @@ router.get('/', function(req, res){
     return
   }
 
-  res.render('home_page')
+  res.render('home_page', { search_type: "titles" })
+
+})
+
+router.get('/results', function(req, res){
+
+  if(!req.session.isAuthenticated) {
+    res.redirect('/')
+    return
+  }
+
+  res.render('home_page', { search_type: "results" })
 
 })
 

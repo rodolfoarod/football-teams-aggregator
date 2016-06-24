@@ -1,5 +1,18 @@
 include layout.jade
 
+    if search_type == "titles"
+        ul(class="nav nav-pills")
+            li(role="presentation" class="active")
+              a(href="/home") Titles
+            li(role="presentation")
+              a(href="/home/results") Results
+    else if search_type == "results"
+        ul(class="nav nav-pills")
+            li(role="presentation")
+              a(href="/home") Titles
+            li(role="presentation" class="active")
+              a(href="/home/results") Results
+
     form(class="form-inline", action="/home/" method="post")
         div(class="form-group")
             input(
