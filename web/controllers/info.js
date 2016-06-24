@@ -61,12 +61,19 @@ router.get("/", function (req, res) {
     res.render('./sparql/info')
 })
 
-router.get("/:team_name", function (req, res) {
+router.get("/search", function (req, res) {
 	
 	var query = new SparqlQuery()
 	addPrefixes(query)
 	addSearchSelectParams(query)
 	appendSearchTriples(query)
+
+	if(!req.query.team_name || req.query.team_name == ""){
+		res.render('./sparql/info')
+		return;
+	}
+
+	var teamName = req.query.team_name
 
 	var queryStr = query.returnQuery()
 	endpoint.selectQuery(queryStr, function (error, response) {
