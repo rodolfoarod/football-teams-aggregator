@@ -1,27 +1,8 @@
 include layout.jade
 
-    if search_type == "titles"
-        ul(class="nav nav-pills")
-            li(role="presentation" class="active")
-              a(href="/info") Information
-            li(role="presentation")
-              a(href="/home/results") Results
-    else if search_type == "results"
-        ul(class="nav nav-pills")
-            li(role="presentation")
-              a(href="/info") information
-            li(role="presentation" class="active")
-              a(href="/home/results") Results
+    include search_type_selection.jade
 
-    form(class="form-inline", action="/home/" method="post")
-        div(class="form-group")
-            input(
-                type="text"
-                class="form-control"
-                id="searchTeam"
-                name="team"
-                placeholder="Search for your team")
-        button(type="submit", class="btn btn-default pp-btn") Search
+    include results_search_form.jade
 
     if team
         include search_table.jade

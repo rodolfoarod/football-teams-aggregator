@@ -20,7 +20,7 @@ SparqlQuery.prototype.addPrefix = function (prefix) {
 }
 SparqlQuery.prototype.appendPrefix = function (prefix) {
     if (prefix != null) {
-        this.prefixString += "\n" + prefix;
+        this.prefixString += " \n " + prefix;
     }
 }
 //

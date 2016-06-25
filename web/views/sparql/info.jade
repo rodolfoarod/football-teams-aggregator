@@ -1,5 +1,12 @@
 include ../layout.jade
+    
+    include ../search_type_selection.jade
+
     include  search_form.jade
+    
     if teams
          include search_results.jade
+    
+    if favTeams
+        include ../favorite_teams_table.jade
         
