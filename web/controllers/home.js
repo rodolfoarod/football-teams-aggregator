@@ -9,8 +9,8 @@ router.get('/', function(req, res){
     return
   }
 
-  dbConnect.getTeamsOfUser(req.session.userId, "titles", function(teams) {
-	res.render('home_page', { search_type: "titles", favTeams: teams })
+  dbConnect.getTeamsOfUser(req.session.userId, "results", function(teams) {
+	res.render('home_page', { search_type: "results", favTeams: teams })
   });
 
 })

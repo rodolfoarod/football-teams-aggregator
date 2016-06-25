@@ -101,7 +101,7 @@ function addTitleToObj(obj, entry) {
 //
 //routes
 router.get("/", function (req, res) {
-    res.render('./sparql/info')
+    res.render('./sparql/info', {search_type: "titles"})
 })
 
 router.get("/search", function (req, res) {
@@ -113,7 +113,7 @@ router.get("/search", function (req, res) {
 	appendSearchLangFilters(query)
 
 	if (!req.query.team || req.query.team == "") {
-		res.render('./sparql/info')
+		res.render('./sparql/info', {search_type: "titles"})
 		return;
 	}
 	appendSearchFilters(query, req.query.team);
@@ -129,7 +129,7 @@ router.get("/search", function (req, res) {
 			jsAns.push(obj)
 		}, this);
 
-		res.render("./sparql/info", { teams: jsAns })
+		res.render("./sparql/info", { teams: jsAns, search_type: "titles" })
 	})
 
 })
