@@ -4,6 +4,7 @@ var router = express.Router()
 
 router.use('/team', require('./team'))
 router.use('/home', require('./home'))
+router.use('/info', require('./info'))
 
 router.get('/', function(req, res){
 

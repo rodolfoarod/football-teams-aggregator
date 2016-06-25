@@ -1,0 +1,36 @@
+include ../layout.jade
+    if team
+        div(class="container")
+            h2 #{team.label}
+            table(class="table table-reflow")
+                thead
+                    tr
+                        if team.chairman
+                            th Chairman
+                        if team.fullname
+                            th Full Name
+                        if team.founded
+                            th Founded
+                        if team.league
+                            th Current League
+                        if team.ground
+                            th Stadium
+                        if team.city
+                            th City
+                tbody
+                    tr
+                        if team.chairman
+                            th #{team.chairman}
+                        if team.fullname
+                            th #{team.fullname}
+                        if team.founded
+                            th #{team.founded}
+                        if team.league
+                            th #{team.league}
+                        if team.ground
+                            th #{team.ground}
+                        if team.city
+                            th #{team.city}
+            ul
+                each title in team.titles
+                    li= title

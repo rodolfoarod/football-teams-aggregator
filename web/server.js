@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser')
 var session = require('express-session')
 
 var port = process.env.PORT || 3000
+//var info = require('./controllers/info')
 
 app.set('views', __dirname + '/views')
 app.engine('jade', require('jade').__express)
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(session({secret: '1234567890QWERTY'}))
 
 app.use(require('./controllers'))
+//app.use('/info', info)
 
 app.listen(port, function(){
     console.log('Listening on port' + port)
