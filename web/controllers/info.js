@@ -85,7 +85,18 @@ function createTeamObject(obj, entry) {
 	if (entry.ground) obj.ground = entry.ground.value;
 	if (entry.city) obj.city = entry.city.value;
 }
-
+function titlesWonSelectParams(query) {
+	query.addSelect("SELECT DISTINCT ?title");
+}
+function titlesWonTriples(query, iri) {
+	var rdfIri = "<" + iri + ">";
+	query.appendTriple("?title a dbo:FootballLeagueSeason .")
+	query.appendTriple("?title dbp:winners " + rdfIri +" .")
+	//query.appendTriple("OPTIONAL{" + rdfIri + " dbp:leagueWinners ?title } ")
+}
+function addTitleToObj(obj, entry) {
+	if (entry.title) obj.titles.push(entry.title.value)
+}
 //
 //
 //routes
@@ -136,7 +147,21 @@ router.get("/team/:iri", function (req, res) {
 		if (jsonAns.length > 0) {
 			var obj = new Object()
 			createTeamObject(obj, jsonAns[0])
-			res.render("./sparql/team", { team: obj })
+			var queryTitles = new SparqlQuery()
+			addPrefixes(queryTitles);
+			titlesWonSelectParams(queryTitles)
+			titlesWonTriples(queryTitles, req.params.iri)
+
+
+			var queryTitlesStr = queryTitles.returnQuery();
+			endpoint.selectQuery(queryTitlesStr, function (error, responseTitles) {
+				obj.titles = [];
+				var jsonTitleAns = JSON.parse(responseTitles.body).results.bindings
+				jsonTitleAns.forEach(function (entry) {
+					addTitleToObj(obj, entry)
+				}, this);
+				res.render("./sparql/team", { team: obj })
+			})
 		}
 	})
 

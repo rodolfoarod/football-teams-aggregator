@@ -7,3 +7,6 @@ include ../layout.jade
         p #{team.league}
         p #{team.ground}
         p #{team.city}
+        ul
+            each title in team.titles
+                li= title
