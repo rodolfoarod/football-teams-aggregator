@@ -9,7 +9,7 @@ router.get('/', function(req, res){
     return
   }
 
-  dbConnect.getTitlesTeam(rec.session.userId, function(teams) {
+  dbConnect.getTeamsOfUser(req.session.userId, "titles", function(teams) {
 	res.render('home_page', { search_type: "titles", favTeams: teams })
   });
 
@@ -22,7 +22,7 @@ router.get('/results', function(req, res){
     return
   }
   
-	dbConnect.getResultTeam(rec.session.userId, function(teams) {
+	dbConnect.getTeamsOfUser(req.session.userId, "results", function(teams) {
 		res.render('home_page', { search_type: "results", favTeams: teams })
 	});
 

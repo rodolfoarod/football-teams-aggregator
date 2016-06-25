@@ -3,44 +3,59 @@
 var sqlite3 = require('sqlite3').verbose();
 var db;
 
-var adding = false;
-var i = 0;
-var resultTeam = new Array();
-
 module.exports = {
-	getResultTeam: function(user_id, callback) {
-		var db = new sqlite3.Database('fta.db');
-		resultTeam = new Array();
-		i = 0;
+	getTeamsOfUser: function(iduser, searchType, callback) {
+		if(searchType !== "results" && searchType !== "titles") {
+			console.log("Invalid search type!");
+			callback(null);
+			return;
+		}
+		
+		createDb();
 
-		db.all("SELECT * from user_team where iduser='" + user_id + "'", function(err,teamIds) {
+		db.all("SELECT * from user_team where iduser='" + iduser + "'", function(err,teamIds) {
+			var nbrOfTeams = teamIds.length;
+			var i = 0;
 			if(teamIds.length) {
-				teamIds.forEach(function (row1) {
-					db.all("SELECT * from team where id='" + row1.idteam + "'", function(err,teams) {
-						teams.forEach(function (row2) {
-							adding = true;
-							resultTeam.push(row2);
-						});
-						adding = false;
-						callback(resultTeam);
-						db.close();
+				var resultTeam = new Array();
+				var sql;
+				teamIds.forEach(function (teamId) {
+					if(searchType === "results") {
+						sql = "SELECT * from team where id='" + teamId.idteam + "' AND idzzero IS NOT NULL";
+					}
+					else if(searchType === "titles") {
+						sql = "SELECT * from team where id='" + teamId.idteam + "' AND iddbpedia IS NOT NULL";
+					}
+					db.all(sql, function(err,teams) {
+						if(teams.length) {
+							teams.forEach(function (team) {
+								resultTeam.push(team);
+								i++;
+								if(i == nbrOfTeams) {
+									callback(resultTeam);
+									closeDb();
+								}
+							});
+						}
+						else {
+							i++;
+							if(i == nbrOfTeams) {
+								callback(resultTeam);
+								closeDb();
+							}
+						}
 					});
 				});
 			}
 			else {
 				callback(null);
-				db.close();
+				closeDb();
 			}
 		});
 	},
 	
-	getTitlesTeam: function(user_id, callback) {
-		var db = new sqlite3.Database('fta.db');
-		db.close();
-	},
-	
 	getUser: function (username, password, callback) {
-		var db = new sqlite3.Database('fta.db');
+		createDb();
 
 		db.all("SELECT * from user where username='" + username + "'", function(err,rows) {
 			if(rows.length) {
@@ -51,12 +66,12 @@ module.exports = {
 					else {
 						callback(null);
 					}
-					db.close();
+					closeDb();
 				});
 			}
 			else {
 				callback(null);
-				db.close();
+				closeDb();
 			}
 		});
 	},
