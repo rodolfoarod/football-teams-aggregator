@@ -10,7 +10,7 @@ router.get('/:teamId/:teamName', function(req, res){
   }
 
   // Store Favorite Team
-  dbConnect.addResultTeam(req.session.userId, req.params.teamId, req.params.teamName);
+  dbConnect.addTeam(req.session.userId, req.params.teamId, -1, req.params.teamName);
 
   var spawn = require('child_process').spawn
   var py = spawn('python', ['../scraping_team.py'])
