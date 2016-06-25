@@ -13,9 +13,9 @@
     "express": "~4.9.0",
     "jade": "^1.11.0",
     "sparql-http-client": "^0.1.0",
-    "request": "^2.72.0",
     "cookie-parser": "*",
     "express-session": "*",
-    "sqlite3": "*"
+    "sqlite3": "*",
+    "request": "^2.72.0"
   }
 }

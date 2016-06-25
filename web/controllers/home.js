@@ -1,4 +1,5 @@
 var express = require('express')
+var dbConnect = require('../db/database.js')
 var router = express.Router()
 
 router.get('/', function(req, res){
@@ -8,7 +9,9 @@ router.get('/', function(req, res){
     return
   }
 
-  res.render('home_page', { search_type: "titles" })
+  dbConnect.getTeamsOfUser(req.session.userId, "titles", function(teams) {
+	res.render('home_page', { search_type: "titles", favTeams: teams })
+  });
 
 })
 
@@ -18,9 +21,10 @@ router.get('/results', function(req, res){
     res.redirect('/')
     return
   }
-
-  var fT = [{team_id: "2", team_name: "Test FC"}]
-  res.render('home_page', { search_type: "results", favTeams: fT })
+  
+	dbConnect.getTeamsOfUser(req.session.userId, "results", function(teams) {
+		res.render('home_page', { search_type: "results", favTeams: teams })
+	});
 
 })
 

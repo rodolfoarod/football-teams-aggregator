@@ -4,8 +4,58 @@ var sqlite3 = require('sqlite3').verbose();
 var db;
 
 module.exports = {
+	getTeamsOfUser: function(iduser, searchType, callback) {
+		if(searchType !== "results" && searchType !== "titles") {
+			console.log("Invalid search type!");
+			callback(null);
+			return;
+		}
+		
+		createDb();
+
+		db.all("SELECT * from user_team where iduser='" + iduser + "'", function(err,teamIds) {
+			var nbrOfTeams = teamIds.length;
+			var i = 0;
+			if(teamIds.length) {
+				var resultTeam = new Array();
+				var sql;
+				teamIds.forEach(function (teamId) {
+					if(searchType === "results") {
+						sql = "SELECT * from team where id='" + teamId.idteam + "' AND idzzero IS NOT NULL";
+					}
+					else if(searchType === "titles") {
+						sql = "SELECT * from team where id='" + teamId.idteam + "' AND iddbpedia IS NOT NULL";
+					}
+					db.all(sql, function(err,teams) {
+						if(teams.length) {
+							teams.forEach(function (team) {
+								resultTeam.push(team);
+								i++;
+								if(i == nbrOfTeams) {
+									callback(resultTeam);
+									closeDb();
+								}
+							});
+						}
+						else {
+							i++;
+							if(i == nbrOfTeams) {
+								callback(resultTeam);
+								closeDb();
+							}
+						}
+					});
+				});
+			}
+			else {
+				callback(null);
+				closeDb();
+			}
+		});
+	},
+	
 	getUser: function (username, password, callback) {
-		var db = new sqlite3.Database('fta.db');
+		createDb();
 
 		db.all("SELECT * from user where username='" + username + "'", function(err,rows) {
 			if(rows.length) {
@@ -16,12 +66,12 @@ module.exports = {
 					else {
 						callback(null);
 					}
-					db.close();
+					closeDb();
 				});
 			}
 			else {
 				callback(null);
-				db.close();
+				closeDb();
 			}
 		});
 	},
