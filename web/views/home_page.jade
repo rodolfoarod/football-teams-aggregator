@@ -1,0 +1,30 @@
+include layout.jade
+
+    if search_type == "titles"
+        ul(class="nav nav-pills")
+            li(role="presentation" class="active")
+              a(href="/info") Titles
+            li(role="presentation")
+              a(href="/home/results") Results
+    else if search_type == "results"
+        ul(class="nav nav-pills")
+            li(role="presentation")
+              a(href="/home") Titles
+            li(role="presentation" class="active")
+              a(href="/home/results") Results
+
+    form(class="form-inline", action="/home/" method="post")
+        div(class="form-group")
+            input(
+                type="text"
+                class="form-control"
+                id="searchTeam"
+                name="team"
+                placeholder="Search for your team")
+        button(type="submit", class="btn btn-default pp-btn") Search
+
+    if team
+        include search_table.jade
+
+    if favTeams
+        include favorite_teams_table.jade

@@ -10,3 +10,7 @@
 .table thead th {
   text-align: center;
 }
+
+label, input {
+  margin: 10px;
+}
