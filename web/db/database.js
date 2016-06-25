@@ -12,10 +12,13 @@ module.exports = {
 		}
 		
 		createDb();
+		
+		console.log("Retriving user " + iduser + " favorite teams for " + searchType + "...");
 
 		db.all("SELECT * from user_team where iduser='" + iduser + "'", function(err,teamIds) {
 			var nbrOfTeams = teamIds.length;
 			var i = 0;
+			var j = 0;
 			if(teamIds.length) {
 				var resultTeam = new Array();
 				var sql;
@@ -29,9 +32,18 @@ module.exports = {
 					db.all(sql, function(err,teams) {
 						if(teams.length) {
 							teams.forEach(function (team) {
-								resultTeam.push(team);
-								i++;
+								var jsonData = {};
+								if(searchType === "results") {
+									jsonData['team_id'] = team.idzzero;
+								}
+								else if(searchType === "titles") {
+									jsonData['team_id'] = team.iddbpedia;
+								}
+								jsonData['team_name'] = team.teamname;
+								resultTeam.push(jsonData);
+								i++; j++;
 								if(i == nbrOfTeams) {
+									console.log("User " + iduser + " have " + j + " favorite teams for " + searchType + ".");
 									callback(resultTeam);
 									closeDb();
 								}
@@ -40,6 +52,7 @@ module.exports = {
 						else {
 							i++;
 							if(i == nbrOfTeams) {
+								console.log("User " + iduser + " have " + j + " favorite teams for " + searchType + ".");
 								callback(resultTeam);
 								closeDb();
 							}
@@ -48,6 +61,7 @@ module.exports = {
 				});
 			}
 			else {
+				console.log("User " + iduser + " don't have favorite teams.");
 				callback(null);
 				closeDb();
 			}
@@ -56,20 +70,25 @@ module.exports = {
 	
 	getUser: function (username, password, callback) {
 		createDb();
+		console.log("Searching user: " + username + "...");
 
 		db.all("SELECT * from user where username='" + username + "'", function(err,rows) {
 			if(rows.length) {
+				console.log("User " + username + " exist.");
 				rows.forEach(function (row) {
 					if(row.password == password) {
+						console.log("User " + username + " gave good password -> Login.");
 						callback(row);
 					}
 					else {
+						console.log("User " + username + " gave wrong password!");
 						callback(null);
 					}
 					closeDb();
 				});
 			}
 			else {
+				console.log("User " + username + " don't exist!");
 				callback(null);
 				closeDb();
 			}
@@ -97,7 +116,7 @@ module.exports = {
 
 				} else {
 
-					console.log("Adding new team and new relation");
+					console.log("Adding new team and new relation...");
 
 					insertTeam(user_id, idzzero, iddbpedia, team_name);
 
@@ -115,12 +134,12 @@ module.exports = {
 
 
 function createDb(callback) {
-	console.log("Create DB");
 	db = new sqlite3.Database('fta.db', callback);
+	console.log("DB opened...");
 }
 
 function insertTeam(user_id, idzzero, iddbpedia, teamname) {
-	console.log("Insert team");
+	console.log("Insert team " + teamname + "...");
 
 	var sql;
 	if(idzzero !== -1) {
@@ -147,7 +166,7 @@ function insertTeam(user_id, idzzero, iddbpedia, teamname) {
 
 function getTeamId(idzzero, iddbpedia, callback) {
 
-	console.log("Getting team id");
+	console.log("Getting team id...");
 
 	var sql;
 	if(idzzero !== -1) {
@@ -166,13 +185,13 @@ function getTeamId(idzzero, iddbpedia, callback) {
 }
 
 function insertTeamRel(user_id, team_id) {
-	console.log("Insert team relation");
+	console.log("Insert team relation...");
 	var stmt = db.prepare("INSERT INTO user_team(iduser, idteam) VALUES ($iduser, $idteam)");
 	stmt.run({ $iduser: user_id, $idteam: team_id });
 	stmt.finalize();
 }
 
 function closeDb() {
-	console.log("DB closing...");
 	db.close();
+	console.log("DB closed.");
 }
