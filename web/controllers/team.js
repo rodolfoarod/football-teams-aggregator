@@ -18,10 +18,12 @@ router.get('/:teamId/:teamName', function(req, res){
   var dataString = ''
 
   py.stdout.on('data', function(data){
-    dataString = JSON.parse(data)
+    //dataString = JSON.parse(data)
+	dataString += data.toString()
   })
 
   py.stdout.on('end', function(){
+	dataString = JSON.parse(dataString)
     res.render('team', {
       teamId: req.params.teamId,
       teamName: req.params.teamName,
