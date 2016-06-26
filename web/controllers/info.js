@@ -116,6 +116,9 @@ function addTitleToObj(obj, entry) {
 router.get("/", function (req, res) {
     
 	dbConnect.getTeamsOfUser(req.session.userId, "titles", function(teams) {
+		teams.forEach(function (entry) {
+			entry.team_id = encodeURIComponent(entry.team_id)
+		}, this)
 		res.render('./sparql/info', { search_type: "titles", favTeams: teams, infoTag: "infoTag" });
 	});
 })
