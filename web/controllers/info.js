@@ -19,6 +19,7 @@ addPrefixes = function (query) {
 	query.appendPrefix('PREFIX dbo: <http://dbpedia.org/ontology/>');
 	query.appendPrefix('PREFIX dbp: <http://dbpedia.org/property/>');
 	query.appendPrefix('PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>');
+	query.appendPrefix("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>");
 }
 //
 //
@@ -56,18 +57,22 @@ function createSearchResultObj(obj, entry) {
 //
 //team specific details
 function addTeamSelectParams(query) {
-	var select = "select distinct ?homepage ?chairman ?fullname ?founded ?league ?ground ?city"
+	var select = "select distinct ?label ?homepage ?chairman ?fullname ?founded ?league ?ground ?city"
+	+ " ?groundLbl ?chairmanLbl ?leagueLbl"
 	query.addSelect(select);
 }
 function appendTeamTriples(query, iri) {
 	var rdfIri = "<" + iri + ">";
 	query.addTriple(rdfIri + " rdfs:label ?label .")
 	query.appendTriple("OPTIONAL{" + rdfIri + " foaf:homepage ?homepage } ")
-	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:chairman ?chairman } ")
+	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:chairman ?chairman ."
++ "?chairman rdfs:label ?chairmanLbl . FILTER( LANG(?chairmanLbl) = 'en' || LANG(?chairmanLbl) = 'pt' ) } ")
 	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:fullname ?fullname } ")
-	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:founded ?founded } ")
-	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:league ?league } ")
-	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:ground ?ground } ")
+	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:founded ?founded . FILTER(xsd:date(?founded))} ")
+	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:league ?league ."
+ + " ?league rdfs:label ?leagueLbl . FILTER( LANG(?leagueLbl) = 'en' || LANG(?leagueLbl) = 'pt' ) } ")
+	query.appendTriple("OPTIONAL{" + rdfIri + " dbp:ground ?ground ."
+		+ "?ground rdfs:label ?groundLbl . FILTER( LANG(?groundLbl) = 'en' || LANG(?groundLbl) = 'pt' ) } ")
 	query.appendTriple("OPTIONAL{" + rdfIri + " dbo:city ?city } ")
 }
 function appendTeamLangFilters(query) {
@@ -78,30 +83,37 @@ function appendTeamFilters(query) {
 }
 function createTeamObject(obj, entry) {
 	if (entry.label) obj.label = entry.label.value;
+	if (entry.homepage) obj.homepage = entry.homepage.value;
 	if (entry.chairman) obj.chairman = entry.chairman.value;
 	if (entry.fullname) obj.fullname = entry.fullname.value;
 	if (entry.founded) obj.founded = entry.founded.value;
 	if (entry.league) obj.league = entry.league.value;
 	if (entry.ground) obj.ground = entry.ground.value;
 	if (entry.city) obj.city = entry.city.value;
+	if (entry.groundLbl) obj.groundLbl = entry.groundLbl.value;
+	if (entry.chairmanLbl) obj.chairmanLbl = entry.chairmanLbl.value;
+	if (entry.leagueLbl) obj.leagueLbl = entry.leagueLbl.value;
 }
 function titlesWonSelectParams(query) {
-	query.addSelect("SELECT DISTINCT ?title");
+	query.addSelect("SELECT DISTINCT ?title ?label");
 }
 function titlesWonTriples(query, iri) {
 	var rdfIri = "<" + iri + ">";
 	query.appendTriple("?title a dbo:FootballLeagueSeason .")
-	query.appendTriple("?title dbp:winners " + rdfIri +" .")
+	query.appendTriple("?title dbp:winners " + rdfIri + " .")
+	query.appendTriple("OPTIONAL{ ?title rdfs:label ?label . FILTER ("
+		+ " LANG(?label) = 'en' || LANG(?label) = 'pt' ) }")
 	//query.appendTriple("OPTIONAL{" + rdfIri + " dbp:leagueWinners ?title } ")
 }
 function addTitleToObj(obj, entry) {
-	if (entry.title) obj.titles.push(entry.title.value)
+	if (entry.title) obj.iri = entry.title.value
+	if (entry.label) obj.label = entry.label.value
 }
 //
 //
 //routes
 router.get("/", function (req, res) {
-    res.render('./sparql/info', {search_type: "titles"})
+    res.render('./sparql/info', { search_type: "titles" })
 })
 
 router.get("/search", function (req, res) {
@@ -113,7 +125,7 @@ router.get("/search", function (req, res) {
 	appendSearchLangFilters(query)
 
 	if (!req.query.team || req.query.team == "") {
-		res.render('./sparql/info', {search_type: "titles"})
+		res.render('./sparql/info', { search_type: "titles" })
 		return;
 	}
 	appendSearchFilters(query, req.query.team);
@@ -158,7 +170,9 @@ router.get("/team/:iri", function (req, res) {
 				obj.titles = [];
 				var jsonTitleAns = JSON.parse(responseTitles.body).results.bindings
 				jsonTitleAns.forEach(function (entry) {
-					addTitleToObj(obj, entry)
+					var title = new Object()
+					addTitleToObj(title, entry)
+					obj.titles.push(title)
 				}, this);
 				res.render("./sparql/team", { team: obj })
 			})

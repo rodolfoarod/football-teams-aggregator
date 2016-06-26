@@ -2,35 +2,44 @@ include ../layout.jade
     if team
         div(class="container")
             h2 #{team.label}
-            table(class="table table-reflow")
-                thead
-                    tr
-                        if team.chairman
-                            th Chairman
-                        if team.fullname
-                            th Full Name
-                        if team.founded
-                            th Founded
-                        if team.league
-                            th Current League
-                        if team.ground
-                            th Stadium
-                        if team.city
-                            th City
-                tbody
-                    tr
-                        if team.chairman
-                            th #{team.chairman}
-                        if team.fullname
-                            th #{team.fullname}
-                        if team.founded
-                            th #{team.founded}
-                        if team.league
-                            th #{team.league}
-                        if team.ground
-                            th #{team.ground}
-                        if team.city
-                            th #{team.city}
-            ul
+            div.table-responsive
+                table.table.table-reflow
+                    thead
+                        tr
+                            if team.fullname
+                                th Full Name
+                            if team.chairman
+                                th Chairman
+                            if team.founded
+                                th Founded
+                            if team.league
+                                th Current League
+                            if team.ground
+                                th Stadium
+                            if team.city
+                                th City
+                    tbody
+                        tr
+                            if team.fullname
+                                td 
+                                    a(href="#{team.homepage}") #{team.fullname}
+                            if team.chairman
+                                td(scope='row') 
+                                    a(href="#{team.chairman}") #{team.chairmanLbl}
+                            if team.founded
+                                td #{team.founded}
+                            if team.league
+                                td 
+                                    a(href="#{team.league}") #{team.leagueLbl}
+                            if team.ground
+                                td 
+                                    a(href="#{team.ground}") #{team.groundLbl}
+                            if team.city
+                                td #{team.city}
+            br
+            br
+            ul.list-group
+                li.list-group-item National Leagues Victorys
                 each title in team.titles
-                    li= title
+                    li.list-group-item 
+                        a(href="#{title.iri}") #{title.label}
