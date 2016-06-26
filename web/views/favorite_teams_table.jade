@@ -7,4 +7,7 @@ table(class="table")
     each ft in favTeams
         tr
           td
-            a(href='/team/#{ft.team_id}/#{ft.team_name}') #{ft.team_name}
+            if infoTag
+               a(href='/info/team/#{ft.team_id}') #{ft.team_name}
+            else
+               a(href='/team/#{ft.team_id}/#{ft.team_name}') #{ft.team_name}

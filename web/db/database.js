@@ -172,7 +172,7 @@ function getTeamId(idzzero, iddbpedia, callback) {
 	if(idzzero !== -1) {
 		sql = "SELECT * FROM team WHERE idzzero=" + idzzero;
 	} else if(iddbpedia !== -1){
-		sql = "SELECT * FROM team WHERE iddbpedia=" + iddbpedia;
+		sql = "SELECT * FROM team WHERE iddbpedia='" + iddbpedia + "'";
 	} else {
 		console.log("getTeamId - Wrong ID");
 		return;

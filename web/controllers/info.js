@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 //router.use('/info', require('./info'))
+var dbConnect = require('../db/database.js');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
@@ -113,7 +114,10 @@ function addTitleToObj(obj, entry) {
 //
 //routes
 router.get("/", function (req, res) {
-    res.render('./sparql/info', { search_type: "titles" })
+    
+	dbConnect.getTeamsOfUser(req.session.userId, "titles", function(teams) {
+		res.render('./sparql/info', { search_type: "titles", favTeams: teams, infoTag: "infoTag" });
+	});
 })
 
 router.get("/search", function (req, res) {
@@ -163,7 +167,9 @@ router.get("/team/:iri", function (req, res) {
 			addPrefixes(queryTitles);
 			titlesWonSelectParams(queryTitles)
 			titlesWonTriples(queryTitles, req.params.iri)
-
+			
+			//console.log("Info: " + req.params.iri + " - " + obj.label);
+			dbConnect.addTeam(req.session.userId, -1, req.params.iri, obj.label);
 
 			var queryTitlesStr = queryTitles.returnQuery();
 			endpoint.selectQuery(queryTitlesStr, function (error, responseTitles) {
